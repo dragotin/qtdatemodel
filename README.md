@@ -14,6 +14,6 @@ documents can be added to the month- and year rows.
 
 Maybe it's useful.
 
-[[https://github.com/dragotin/qtdatemodel/blob/master/img/datemodel.png|alt=datemodel]]
+[[https://github.com/dragotin/qtdatemodel/blob/master/datemodel.png|alt=datemodel]]
 
 Klaas Freitag <klaas@volle-kraft-voraus.de>
