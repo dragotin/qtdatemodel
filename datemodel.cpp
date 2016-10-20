@@ -72,6 +72,14 @@ private:
 };
 
 
+TreeItem::~TreeItem()
+{
+    foreach( TreeItem *child, childItems ) {
+        delete(child);
+    }
+    delete dataPtr;
+}
+
 TreeItem::TreeItem(AbstractIndx *indx, TreeItem *parent)
     :dataPtr(indx), parentItem(parent)
 {
@@ -185,8 +193,12 @@ public:
 DateModel::DateModel(QObject *parent)
     :QAbstractItemModel(parent)
 {
-    rootItem = new TreeItem(NULL);
+    _rootItem = new TreeItem(NULL);
+}
 
+DateModel::~DateModel()
+{
+    delete _rootItem;
 }
 
 int DateModel::columnCount(const QModelIndex &parent) const
@@ -195,7 +207,7 @@ int DateModel::columnCount(const QModelIndex &parent) const
     return _columnCount;
 }
 
-void DateModel::setHeaderStrings( const QStringList& headers)
+void DateModel::setHeaderLabels( const QStringList& headers)
 {
     _headers = headers;
 }
@@ -295,7 +307,7 @@ QModelIndex DateModel::index(int row, int column, const QModelIndex &parent) con
      TreeItem *parentItem;
 
      if (!parent.isValid())
-         parentItem = rootItem;
+         parentItem = _rootItem;
      else
          parentItem = static_cast<TreeItem*>(parent.internalPointer());
 
@@ -314,7 +326,7 @@ QModelIndex DateModel::parent(const QModelIndex &index) const
     TreeItem *childItem = static_cast<TreeItem*>(index.internalPointer());
     TreeItem *parentItem = childItem->parent();
 
-    if (parentItem == rootItem)
+    if (parentItem == _rootItem)
         return QModelIndex();
 
     return createIndex(parentItem->row(), 0, parentItem);
@@ -327,7 +339,7 @@ int DateModel::rowCount(const QModelIndex &parent) const
          return 0;
 
      if (!parent.isValid())
-         parentItem = rootItem;
+         parentItem = _rootItem;
      else
          parentItem = static_cast<TreeItem*>(parent.internalPointer());
 
@@ -340,6 +352,10 @@ void DateModel::setColumnCount(int columns)
         _columnCount = columns;
         _monthExtra.resize(columns);
         _yearExtra.resize(columns);
+        for(int i = 0; i < columns; i++) {
+            _monthExtra[i] = Zero;
+            _yearExtra[i] = Zero;
+        }
     }
 }
 
@@ -377,7 +393,7 @@ TreeItem *DateModel::findYearItem(int year)
 {
     TreeItem *yearItem = NULL;
 
-    QList<TreeItem*> yearitems = rootItem->children();
+    QList<TreeItem*> yearitems = _rootItem->children();
     foreach( TreeItem *item, yearitems ) {
         AbstractIndx *indx = item->payload();
         if( indx->year() == year ) {
@@ -418,7 +434,7 @@ void DateModel::addData( DocumentIndx doc )
 
     if( !yearItem ) {
         AbstractIndx *newIndx = new YearIndx(year);
-        yearItem = new TreeItem( newIndx, rootItem );
+        yearItem = new TreeItem( newIndx, _rootItem );
     }
 
     // ====

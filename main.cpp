@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     labels.append( "Customer");
     labels.append( "Revenue");
 
-    model.setHeaderStrings(labels);
+    model.setHeaderLabels(labels);
 
     DocumentIndx doc(QDate(2012, 12, 31));
     QVariantList vl;

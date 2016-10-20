@@ -33,6 +33,8 @@ public:
     AbstractIndx()
         :_type(Invalid) { }
 
+    virtual ~AbstractIndx() { }
+
     explicit AbstractIndx(IndxType t, QDate d)
         :_type(t), _date(d) { }
 
@@ -72,6 +74,8 @@ class DateModel : public QAbstractItemModel
 {
 public:
     DateModel(QObject *parent = 0);
+    virtual ~DateModel();
+
     enum CalcType {
         Zero = 0,
         Sum,
@@ -79,7 +83,7 @@ public:
     };
 
     void setColumnCount(int columns);
-    void setHeaderStrings( const QStringList& headers);
+    void setHeaderLabels( const QStringList& headers);
 
     TreeItem* findYearItem(int year);
     TreeItem* findMonthItem(int year, int month);
@@ -103,7 +107,7 @@ protected:
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
 private:
-    TreeItem          *rootItem;
+    TreeItem          *_rootItem;
     int               _columnCount;
     QVector<CalcType> _monthExtra;
     QVector<CalcType> _yearExtra;
