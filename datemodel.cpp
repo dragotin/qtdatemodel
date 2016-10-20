@@ -152,13 +152,18 @@ int AbstractIndx::month()
     return _date.month();
 }
 
+int AbstractIndx::day()
+{
+    return _date.day();
+}
+
 /* ================================================================== */
 
 class YearIndx : public AbstractIndx
 {
 public:
     explicit YearIndx(int year)
-        :AbstractIndx(IndxType::YearType, QDate(year, 1, 1)) {
+        :AbstractIndx(AbstractIndx::YearType, QDate(year, 1, 1)) {
         _data << QString::number(year);
     }
 };
@@ -169,7 +174,7 @@ class MonthIndx : public AbstractIndx
 {
 public:
     explicit MonthIndx(int year, int month)
-        :AbstractIndx(IndxType::MonthType, QDate(year, month, 1)) {
+        :AbstractIndx(AbstractIndx::MonthType, QDate(year, month, 1)) {
 
         _data << QDate::longMonthName(month);
     }
@@ -263,7 +268,12 @@ QVariant DateModel::data(const QModelIndex &index, int role) const
     }
 
     if( indx->type() == AbstractIndx::DocumentType ) {
-        return item->payload()->data(index.column());
+        if( index.column() == 0 ) {
+            // show the day of the date
+            return QVariant( indx->day() );
+        } else {
+            return item->payload()->data(index.column());
+        }
     }
     return QVariant();
 }

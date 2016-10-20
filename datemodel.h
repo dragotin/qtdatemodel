@@ -46,6 +46,7 @@ public:
 
     int year();
     int month();
+    int day();
 
 protected:
     QVariantList _data;
@@ -61,7 +62,7 @@ class DocumentIndx : public AbstractIndx
 {
 public:
     DocumentIndx( QDate d)
-        :AbstractIndx(IndxType::DocumentType, d) {
+        :AbstractIndx(DocumentType, d) {
     }
 };
 
