@@ -190,28 +190,54 @@ public:
 
 /* ================================================================== */
 
+/*!
+ *  Constructs a DateModel with the given \a parent based on a QAbstractItemModel
+ */
 DateModel::DateModel(QObject *parent)
     :QAbstractItemModel(parent)
 {
     _rootItem = new TreeItem(NULL);
 }
-
+/*!
+ *  Denstructs a DateModel
+ */
 DateModel::~DateModel()
 {
     delete _rootItem;
 }
 
+/*!
+ *  Returns the amount of colums defined for the model.
+ *
+ * \sa setColumnCount
+ */
 int DateModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return _columnCount;
 }
 
+/*!
+ * \brief set the label strings
+ * \param headers stringlist of header entries
+ *
+ * Sets the header labels. The \a headers list should contain as many entries
+ * as the the model has columns set by setColumnCount()
+ */
 void DateModel::setHeaderLabels( const QStringList& headers)
 {
     _headers = headers;
 }
 
+/*!
+ * \brief DateModel::headerData
+ * \param section - index of column to return
+ * \param orientation - only Qt::Horizontal supported
+ * \param role - the role, currently only Qt::DisplayRole
+ * \return QVariant the header string
+ *
+ * returns the header value, reimplemented from QAbstractItemModel
+ */
 QVariant DateModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if( role == Qt::DisplayRole && orientation == Qt::Horizontal and section < _headers.count() ) {
@@ -220,6 +246,14 @@ QVariant DateModel::headerData(int section, Qt::Orientation orientation, int rol
     return QVariant();
 }
 
+/*!
+ * \brief DateModel::data
+ * \param index
+ * \param role
+ * \return data according to the role and index
+ *
+ * reimplemented from QAbstractItemModel
+ */
 QVariant DateModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
@@ -324,10 +358,14 @@ QModelIndex DateModel::parent(const QModelIndex &index) const
         return QModelIndex();
 
     TreeItem *childItem = static_cast<TreeItem*>(index.internalPointer());
-    TreeItem *parentItem = childItem->parent();
-
-    if (parentItem == _rootItem)
+    if( !childItem ) {
         return QModelIndex();
+    }
+
+    TreeItem *parentItem = childItem->parent();
+    if (!parentItem || parentItem == _rootItem) {
+        return QModelIndex();
+    }
 
     return createIndex(parentItem->row(), 0, parentItem);
 }
@@ -346,6 +384,12 @@ int DateModel::rowCount(const QModelIndex &parent) const
      return parentItem->childCount();
 }
 
+/*!
+ * \brief DateModel::setColumnCount
+ * \param columns the number of columns
+ *
+ * Sets the number of columns of the model.
+ */
 void DateModel::setColumnCount(int columns)
 {
     if( columns > 0 ) {
@@ -359,6 +403,14 @@ void DateModel::setColumnCount(int columns)
     }
 }
 
+/*!
+ * \brief DateModel::setMonthSumColumn
+ * \param column - the column index
+ *
+ * Sets the column with the number \a column as extra column only for
+ * month items. It calculates the sum of the values in its child
+ * items in the according column.
+ */
 void DateModel::setMonthSumColumn( int column )
 {
     if(column < _columnCount) {
@@ -366,6 +418,13 @@ void DateModel::setMonthSumColumn( int column )
     }
 }
 
+/*!
+ * \brief DateModel::setMonthCountColumn
+ * \param column - the column index
+ *
+ * Sets the column with the number \a column as extra column only for
+ * month items. It counts the amount of child items.
+ */
 void DateModel::setMonthCountColumn( int column )
 {
     if( column < _columnCount ) {
@@ -373,6 +432,14 @@ void DateModel::setMonthCountColumn( int column )
     }
 }
 
+/*!
+ * \brief DateModel::setYearSumColumn
+ * \param column - the column index
+ *
+ * Sets the column with the number \a column as extra column only for
+ * year items. It calculates the sum of the values in its child
+ * items in the according column.
+ */
 void DateModel::setYearSumColumn( int column )
 {
     if(column < _columnCount) {
@@ -380,6 +447,13 @@ void DateModel::setYearSumColumn( int column )
     }
 }
 
+/*!
+ * \brief DateModel::setYearCountColumn
+ * \param column - the column index
+ *
+ * Sets the column with the number \a column as extra column only for
+ * year items. It counts the amount of child items.
+ */
 void DateModel::setYearCountColumn( int column )
 {
     if( column < _columnCount ) {
@@ -388,6 +462,12 @@ void DateModel::setYearCountColumn( int column )
 }
 
 void DateModel::setYearCountColumn( int column );
+
+/*!
+ * \brief DateModel::findYearItem - returns the year item of the treeview
+ * \param year the number of the year^
+ * \return the TreeItem that is associated with the given year.
+ */
 
 TreeItem *DateModel::findYearItem(int year)
 {
@@ -404,6 +484,12 @@ TreeItem *DateModel::findYearItem(int year)
     return yearItem;
 }
 
+/*!
+ * \brief DateModel::findMonthItem - returns the month item
+ * \param year the number of the year^
+ * \param month the number of the month
+ * \return the TreeItem that is associated with the given month.
+ */
 TreeItem *DateModel::findMonthItem(int year, int month)
 {
     TreeItem *monthItem = NULL;
@@ -422,6 +508,16 @@ TreeItem *DateModel::findMonthItem(int year, int month)
     return monthItem;
 }
 
+/*!
+ * \brief DateModel::addData - adds data to the model
+ * \param doc - the data to add
+ *
+ * This is the main method to add data to the model. Just create a DocumentIndx class
+ * with a date and use setData() to set data for the amount of columns the model has.
+ * Add it to the model using this method.
+ *
+ * \note the DocumentIndx is copied so that the caller does not need to keep it.
+ */
 void DateModel::addData( DocumentIndx doc )
 {
     int month = doc.month();

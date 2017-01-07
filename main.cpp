@@ -21,13 +21,18 @@ int main(int argc, char *argv[])
 
     QTreeView view;
 
+    // create the model and set some basic attributes
     DateModel model;
     model.setColumnCount(4);
+
+    // special colums: Column 3 sums up the values of the child items and
+    // column 1 counts the amount of child entries
     model.setMonthSumColumn(3);
     model.setMonthCountColumn(1);
     model.setYearSumColumn(3);
     model.setYearCountColumn(1);
 
+    // sets useful labels
     QStringList labels;
     labels.append( "Year, Month");
     labels.append( "Document No.");
@@ -36,6 +41,7 @@ int main(int argc, char *argv[])
 
     model.setHeaderLabels(labels);
 
+    // add data to the model using the convenience method with DocumentIndx.
     DocumentIndx doc(QDate(2012, 12, 31));
     QVariantList vl;
     vl.insert(0, QL1(""));

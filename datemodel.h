@@ -20,6 +20,15 @@
 
 class TreeItem;
 
+/*!
+    \class AbstractIndx
+    \brief The AbstractIndx class is the base class for the data classes of DateModel.
+
+    The AbstractIndx class is the base class for the DocumentIndx class, which is
+    used to manage the data of the items of the DateModel. Apart from the public
+    DocumentIndx, there are also hidden YearIndx and MonthIndx classes.
+
+ */
 class AbstractIndx
 {
 public:
@@ -60,6 +69,19 @@ private:
 
 /* ================================================================== */
 
+/*!
+    \class DocumentIndx
+    \brief The DocumentIndx class is representing a document in the DateModel.
+
+    The DocumentIndx class is representing a single item in the DateModel. It
+    is constructed with a QDate as argument, as the most important sort criteria.
+
+    To add user data to it, either the data() method can be reimplemented, or more
+    conveniently, the setData() method of the base class could be used to set data
+    for each of the columns.
+
+ */
+
 class DocumentIndx : public AbstractIndx
 {
 public:
@@ -69,6 +91,19 @@ public:
 };
 
 /* ================================================================== */
+
+/*!
+    \class DateModel
+    \brief The DateModel is a Qt Model to be used with Qt Treeviews, sorted by date.
+
+    The DateModel is a special Qt data model that can be used with Qt Treeview.
+    It sorts the data by date, in a treeview structured after years and month.
+
+    To use the DateModel, it needs to be instanciated and set as model for a
+    treeview. While the normal QAbstractItemModel methods work, it has a couple
+    of convenience functions to make it easier to deal with.
+
+ */
 
 class DateModel : public QAbstractItemModel
 {
