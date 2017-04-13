@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     // sets useful labels
     QStringList labels;
     labels.append( "Year, Month");
-    labels.append( "Document No.");
+    labels.append( "Document No./Count");
     labels.append( "Customer");
     labels.append( "Revenue");
 
