@@ -285,7 +285,7 @@ QVariant DateModel::data(const QModelIndex &index, int role) const
                 }
             }
             return sum;
-        } else if( _monthExtra[col] == Count ) {
+        } else if( _yearExtra[col] == Count ) {
             int cnt = 0;
             foreach( TreeItem *month, monthItems) {
                 cnt += month->children().count();
